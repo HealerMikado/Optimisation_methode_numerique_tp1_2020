@@ -15,7 +15,7 @@ X, Y = data.get_data()
 if True:
     manager = Manager(X, Y, ols.cost)
 
-    manager.run(ols.RandomSearch(X, Y), "recherche aléatoire", 500, 10 ** (-5))
+    manager.run(ols.RandomSearch(X, Y), "recherche aléatoire", 1000, 10 ** (-5))
     manager.run(ols.RandomSearch(X, Y), "recherche aléatoire (bis)", 1000, 10 ** (-5))
     manager.run(ols.RandomSearch(X, Y), "recherche aléatoire (ter)", 1000, 10 ** (-5))
     manager.run(ols.RandomSearch(X, Y), "recherche aléatoire (quat)", 1000,10 ** (-5))

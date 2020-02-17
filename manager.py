@@ -61,10 +61,21 @@ class Manager:
             times.append(t1 - t0)
             if i % (iter_max // 10) == 0:
                 print("iteration %d: %.5f" % (i, costs[-1]))
-        if cost < threshold:
-            print("A convergé !!!")
+
+            if self.a_converger(costs, threshold):
+                print("A convergé !!!")
         self.logs[algo_label] = {'costs': np.array(costs),
                                  'times': np.cumsum(times)}
+
+    def a_converger(self,costs, threshold):
+        """
+        Détermine si l'algorithme a convergé. On a convergé si le coût
+        moyen des 10 dernières itérations est < seuil
+        :return: True si moyenne des 10 dernière iter < seuil. False sinon
+        """
+        return np.mean(costs[-10:]) < threshold
+
+
 
     def show_plots(self):
         """Affiche les résultats des runs.
