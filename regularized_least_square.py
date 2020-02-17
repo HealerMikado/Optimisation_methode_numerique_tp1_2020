@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""Fonction de coût et algorithmes pour la régression aux moindres carrés ordinaire."""
+"""Fonction de coût et algorithmes pour la régression aux moindres carrés régularisée (L2)."""
 
 import numpy as np
 from numpy.random import randn, choice
+
+lambda_ = 0.1
 
 def cost(X, Y, beta):
     """Fonction de coût de la régression aux moindres carrés ordinaire.
@@ -14,15 +16,15 @@ def cost(X, Y, beta):
     :type Y: numpy.matrix, shape = (n,1)
     :param beta: Vecteur de paramètres de l'application linéaire
     :type beta: numpy.matrix, shape = (d,1)
-    :return: MSE : moyenne des erreurs au carré
+    :return: moyenne des erreurs au carré + régularisation L2
 
     >>> X = np.matrix([[1, 2], [3, 4], [1, 4]])
     >>> Y = np.matrix([[0.1], [0.9], [0.5]])
     >>> beta = np.matrix([[0.2], [0.1]])
     >>> np.round(cost(X, Y, beta), 4)
-    0.0367
+    0.0417
     """
-    return np.mean(np.square((X*beta - Y)))
+    return np.mean(np.square((X*beta - Y))) + lambda_ * np.linalg.norm(beta)**2
 
 
 class RandomSearch:
@@ -82,7 +84,7 @@ class GradientDescent:
         """Prochain point."""
         XX = self.X.T * self.X / self.X.shape[0]      # on divise par le nombre d'exemples pour homogénéiser le comportement
         XY = self.X.T * self.Y / self.X.shape[0]      # on divise par le nombre d'exemples pour homogénéiser le comportement
-        self.beta -= self.a / (1 + self.b*self.t) * 2 * (XX*self.beta - XY)
+        self.beta -= self.a / (1 + self.b*self.t) * (2 * (XX*self.beta - XY) + 2 * lambda_ * self.beta)
         self.t += 1
         return self.beta
 
@@ -121,11 +123,9 @@ class StochasticGradientDescent:
         inds = choice(self.X.shape[0], self.mb_size, replace=False)
         XX = self.X[inds,:].T * self.X[inds,:] / self.mb_size
         XY = self.X[inds,:].T * self.Y[inds,:] / self.mb_size
-        self.beta -= self.a / (1 + self.b*self.t) * 2 * (XX*self.beta - XY)
+        self.beta -= self.a / (1 + self.b*self.t) * (2 * (XX*self.beta - XY) + 2 * lambda_ * self.beta)
         self.t += 1
         return self.beta
-
-
 
 if __name__ == "__main__":
     import doctest
